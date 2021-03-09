@@ -45,6 +45,7 @@ db.once("open", () => {
       pusher.trigger("messages", "inserted", {
         name: messageDetails.name,
         message: messageDetails.message,
+        received: messageDetails.received,
       });
     } else {
       console.log("Something's wrong");

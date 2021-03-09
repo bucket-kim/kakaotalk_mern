@@ -10,8 +10,9 @@ import CallIcon from "@material-ui/icons/Call";
 import VideocamIcon from "@material-ui/icons/Videocam";
 import React, { useEffect, useState } from "react";
 import "./Chat.css";
+import axios from "./axios";
 
-function Chat() {
+function Chat({ messages }) {
   const [seed, setSeed] = useState("");
   const [input, setInput] = useState("");
 
@@ -19,9 +20,17 @@ function Chat() {
     setSeed(Math.floor(Math.random() * 5000));
   }, []);
 
-  const sendMessage = (e) => {
+  const sendMessage = async (e) => {
     e.preventDefault();
-    console.log("you typed", input);
+
+    await axios.post("/message/new", {
+      message: input,
+      name: "BK",
+      timestamp: "Now",
+      received: false,
+    });
+
+    setInput("");
   };
 
   const today = new Date();
@@ -56,13 +65,15 @@ function Chat() {
         </div>
       </div>
       <div className="chat__body">
-        <div className={`chat__message ${true && "chat__reciever"}`}>
-          <p>
-            <span className="chat__name"> Brian Kim</span>
-            yoyoyoyoy
+        {messages.map((message) => (
+          <p
+            className={`chat__message ${message.received && "chat__reciever"}`}
+          >
+            <span className="chat__name">{message.name}</span>
+            {message.message}
             <span className="chat__timestamp">{time}</span>
           </p>
-        </div>
+        ))}
       </div>
       <div className="chat__footer">
         <div className="footer__top">
@@ -86,9 +97,8 @@ function Chat() {
             </IconButton>
           </div>
         </div>
-        <form action="">
+        <form>
           <input
-            name="message"
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
